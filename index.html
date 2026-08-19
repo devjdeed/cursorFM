@@ -3,8 +3,30 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Cursor FM</title>
-    <meta name="description" content="A live study-music station. One mix, always on." />
+    <title>Cursor FM — Music for the agents</title>
+    <meta
+      name="description"
+      content="Cursor FM music for the agents."
+    />
+    <link rel="canonical" href="https://cursorfm.devjdeed.workers.dev/" />
+    <meta name="theme-color" content="#0c0a09" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://cursorfm.devjdeed.workers.dev/" />
+    <meta property="og:title" content="Cursor FM — Music for the agents" />
+    <meta
+      property="og:description"
+      content="Cursor FM music for the agents."
+    />
+    <meta property="og:image" content="https://cursorfm.devjdeed.workers.dev/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Cursor FM — Music for the agents" />
+    <meta
+      name="twitter:description"
+      content="Cursor FM music for the agents."
+    />
+    <meta name="twitter:image" content="https://cursorfm.devjdeed.workers.dev/og.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -12,6 +34,16 @@
       rel="stylesheet"
     />
     <link rel="icon" href="/favicon.webp" type="image/webp" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "RadioStation",
+        "name": "Cursor FM",
+        "url": "https://cursorfm.devjdeed.workers.dev/",
+        "description": "Cursor FM music for the agents.",
+        "image": "https://cursorfm.devjdeed.workers.dev/og.png"
+      }
+    </script>
     <style>
       .stage-loader{position:absolute;top:0;left:0;right:0;z-index:2;pointer-events:none}
       .stage-loader-track{width:100%;height:2px;overflow:hidden;background:rgba(232,184,109,.18)}
@@ -37,6 +69,7 @@
 
       <section class="hero">
         <h1>Cursor FM</h1>
+        <p class="tagline">Cursor FM music for the agents.</p>
       </section>
 
       <button id="gate" class="gate" type="button">

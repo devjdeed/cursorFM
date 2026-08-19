@@ -192,6 +192,15 @@ h1 {
   line-height: 0.95;
 }
 
+.tagline {
+  margin: 18px auto 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  line-height: 1.45;
+}
+
 .gate,
 .mute {
   pointer-events: auto;

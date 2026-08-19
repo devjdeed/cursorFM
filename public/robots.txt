@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /merged-audio.mp3
+Disallow: /Club%20Night.html
+Disallow: /Night%20Surf.html
+Disallow: /Night%20Studio.html
+Disallow: /Game%20Night.html
+
+Sitemap: https://cursorfm.devjdeed.workers.dev/sitemap.xml
