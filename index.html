@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Cursor FM — Study</title>
     <meta name="description" content="A live study-music station. One mix, always on." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -11,10 +11,19 @@
       href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Outfit:wght@300;400;500&display=swap"
       rel="stylesheet"
     />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.webp" type="image/webp" />
+    <link rel="prefetch" href="/Night%20Surf.html" />
+    <link rel="prefetch" href="/Night%20Studio.html" />
+    <link rel="prefetch" href="/Game%20Night.html" />
   </head>
   <body>
-    <div id="stage" class="stage" aria-hidden="true"></div>
+    <div id="stage" class="stage" aria-hidden="true">
+      <div class="stage-loader">
+        <div class="stage-loader-track">
+          <div class="stage-loader-fill"></div>
+        </div>
+      </div>
+    </div>
 
     <main id="shell" class="shell">
       <header class="top">
@@ -54,7 +63,7 @@
       </section>
     </main>
 
-    <audio id="mix" playsinline></audio>
+    <audio id="mix" playsinline webkit-playsinline></audio>
     <script type="module" src="/src/client/main.ts"></script>
   </body>
 </html>

@@ -6,17 +6,14 @@ const SCENES = [
 ];
 
 const INTERVAL_MS = 2 * 60 * 1000;
-const PRELOAD_MS = 10 * 1000;
-const UNPACK_MS = 2000;
 const FADE_MS = 600;
+const UNPACK_TIMEOUT_MS = 30_000;
 const CHROME_STYLE = `[data-omelette-chrome]{display:none!important}#__bundler_loading,#__bundler_err{display:none!important}`;
 
 export function startSceneLoop(stage: HTMLElement): void {
+  const frames: HTMLIFrameElement[] = [];
   let index = 0;
-  let current: HTMLIFrameElement | undefined;
-  let nextPromise: Promise<HTMLIFrameElement> | undefined;
   let swapTimer = 0;
-  let preloadTimer = 0;
 
   function srcFor(i: number): string {
     return encodeURI(SCENES[i % SCENES.length]);
@@ -48,77 +45,150 @@ export function startSceneLoop(stage: HTMLElement): void {
     tick();
   }
 
-  function createFrame(src: string): HTMLIFrameElement {
+  function createFrame(src: string, priority: "high" | "low"): HTMLIFrameElement {
     const frame = document.createElement("iframe");
     frame.src = src;
     frame.setAttribute("title", "Station visual");
     frame.setAttribute("aria-hidden", "true");
+    frame.setAttribute("fetchpriority", priority);
+    frame.loading = "eager";
     stage.appendChild(frame);
     hideSceneChrome(frame);
     return frame;
   }
 
-  function waitForLoad(frame: HTMLIFrameElement): Promise<void> {
+  function isSceneDocument(frame: HTMLIFrameElement): boolean {
+    try {
+      return /\.html$/i.test(frame.contentWindow?.location.pathname ?? "");
+    } catch {
+      return false;
+    }
+  }
+
+  function isUnpacked(frame: HTMLIFrameElement): boolean {
+    const doc = frame.contentDocument;
+    if (!isSceneDocument(frame) || !doc?.body) {
+      return false;
+    }
+    return !doc.getElementById("__bundler_thumbnail") && !doc.getElementById("__bundler_loading");
+  }
+
+  function waitUntilUnpacked(frame: HTMLIFrameElement): Promise<void> {
     return new Promise((resolve) => {
-      const done = () => {
-        window.setTimeout(resolve, UNPACK_MS);
+      const started = Date.now();
+      let settled = false;
+      const finish = (): void => {
+        if (settled) {
+          return;
+        }
+        settled = true;
+        frame.removeEventListener("load", tick);
+        resolve();
       };
-      frame.addEventListener("load", done, { once: true });
+      const tick = (): void => {
+        if (!frame.isConnected || isUnpacked(frame) || Date.now() - started > UNPACK_TIMEOUT_MS) {
+          finish();
+          return;
+        }
+        window.setTimeout(tick, 50);
+      };
+      frame.addEventListener("load", tick);
+      tick();
     });
   }
 
-  async function mount(i: number): Promise<HTMLIFrameElement> {
-    const frame = createFrame(srcFor(i));
-    await waitForLoad(frame);
-    return frame;
+  function waitForIdle(): Promise<void> {
+    return new Promise((resolve) => {
+      const ric = window.requestIdleCallback;
+      if (typeof ric === "function") {
+        ric(() => resolve(), { timeout: 1500 });
+        return;
+      }
+      window.setTimeout(resolve, 200);
+    });
   }
 
-  function unload(frame: HTMLIFrameElement | undefined): void {
-    if (!frame) {
-      return;
+  function createLoader(): { set: (value: number) => void; done: () => void } {
+    const el = stage.querySelector(".stage-loader") as HTMLElement | null;
+    const fill = el?.querySelector(".stage-loader-fill") as HTMLElement | null;
+    let target = 0;
+
+    function paint(value: number): void {
+      if (!fill || !el) {
+        return;
+      }
+      el.classList.add("is-held");
+      fill.style.transform = `scaleX(${value})`;
     }
-    frame.classList.remove("is-active");
-    window.setTimeout(() => {
-      frame.remove();
-    }, FADE_MS);
+
+    return {
+      set(value: number) {
+        target = Math.max(target, Math.min(1, value));
+        paint(target);
+      },
+      done() {
+        if (stage.classList.contains("has-scene")) {
+          return;
+        }
+        paint(1);
+        stage.classList.add("has-scene");
+        window.setTimeout(() => {
+          el?.remove();
+        }, FADE_MS);
+      },
+    };
   }
 
   function schedule(): void {
     window.clearTimeout(swapTimer);
-    window.clearTimeout(preloadTimer);
-    preloadTimer = window.setTimeout(() => {
-      void preloadNext();
-    }, Math.max(0, INTERVAL_MS - PRELOAD_MS));
     swapTimer = window.setTimeout(() => {
       void swap();
     }, INTERVAL_MS);
   }
 
-  function preloadNext(): void {
-    if (nextPromise) {
-      return;
-    }
-    nextPromise = mount((index + 1) % SCENES.length);
-  }
-
   async function swap(): Promise<void> {
     const nextIndex = (index + 1) % SCENES.length;
-    if (!nextPromise) {
-      nextPromise = mount(nextIndex);
+    const incoming = frames[nextIndex];
+    const outgoing = frames[index];
+    if (incoming) {
+      await waitUntilUnpacked(incoming);
+      incoming.classList.add("is-active");
     }
-    const incoming = await nextPromise;
-    const outgoing = current;
-    current = incoming;
-    nextPromise = undefined;
+    outgoing?.classList.remove("is-active");
     index = nextIndex;
-    current.classList.add("is-active");
-    unload(outgoing);
     schedule();
   }
 
-  void mount(0).then((frame) => {
-    current = frame;
-    frame.classList.add("is-active");
+  async function boot(): Promise<void> {
+    const loader = createLoader();
+
+    const first = createFrame(srcFor(0), "high");
+    frames[0] = first;
+
+    const markHtmlArrived = (): void => {
+      if (isSceneDocument(first)) {
+        loader.set(0.58);
+        return;
+      }
+      first.addEventListener("load", markHtmlArrived, { once: true });
+    };
+    first.addEventListener("load", markHtmlArrived, { once: true });
+    if (isSceneDocument(first)) {
+      loader.set(0.58);
+    }
+
+    await waitUntilUnpacked(first);
+    loader.done();
+    first.classList.add("is-active");
     schedule();
-  });
+
+    for (let i = 1; i < SCENES.length; i += 1) {
+      await waitForIdle();
+      const frame = createFrame(srcFor(i), "low");
+      frames[i] = frame;
+      await waitUntilUnpacked(frame);
+    }
+  }
+
+  void boot();
 }

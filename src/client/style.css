@@ -18,9 +18,12 @@ html,
 body {
   margin: 0;
   min-height: 100%;
+  min-height: 100dvh;
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-ui);
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior: none;
 }
 
 body {
@@ -34,7 +37,52 @@ body {
   width: 100%;
   height: 100%;
   z-index: 0;
-  background: var(--bg);
+  background: #08090f;
+}
+
+.stage-loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  pointer-events: none;
+  transition: opacity 600ms ease;
+}
+
+.stage.has-scene .stage-loader {
+  opacity: 0;
+}
+
+.stage-loader-track {
+  width: 100%;
+  height: 2px;
+  overflow: hidden;
+  background: var(--amber-dim);
+}
+
+.stage-loader-fill {
+  width: 100%;
+  height: 100%;
+  background: var(--amber);
+  box-shadow: 0 0 12px var(--amber);
+  transform: scaleX(0.06);
+  transform-origin: left center;
+  animation: loader-creep 12s cubic-bezier(0.12, 0.7, 0.2, 1) forwards;
+}
+
+.stage-loader.is-held .stage-loader-fill {
+  animation: none;
+  transition: transform 280ms ease-out;
+}
+
+@keyframes loader-creep {
+  0% {
+    transform: scaleX(0.06);
+  }
+  100% {
+    transform: scaleX(0.86);
+  }
 }
 
 .stage iframe {
@@ -44,12 +92,15 @@ body {
   height: 100%;
   border: 0;
   opacity: 0;
+  z-index: 0;
   transition: opacity 600ms ease;
   pointer-events: none;
+  background: #08090f;
 }
 
 .stage iframe.is-active {
   opacity: 1;
+  z-index: 1;
   pointer-events: auto;
 }
 
@@ -59,17 +110,23 @@ body {
   min-height: 100dvh;
   display: grid;
   grid-template-rows: auto 1fr auto auto;
-  padding: 28px 24px 32px;
+  padding:
+    max(20px, env(safe-area-inset-top, 0px))
+    max(20px, env(safe-area-inset-right, 0px))
+    max(24px, env(safe-area-inset-bottom, 0px))
+    max(20px, env(safe-area-inset-left, 0px));
   max-width: 720px;
   margin: 0 auto;
+  width: 100%;
   pointer-events: none;
 }
 
 .top {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  gap: 16px;
+  align-items: flex-start;
+  gap: 12px 16px;
+  min-width: 0;
 }
 
 .live,
@@ -85,8 +142,15 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
   color: var(--live);
   line-height: 1;
+}
+
+.status {
+  min-width: 0;
+  text-align: right;
+  line-height: 1.45;
 }
 
 .status:empty {
@@ -130,7 +194,7 @@ body {
 h1 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(3.4rem, 10vw, 5.6rem);
+  font-size: clamp(2.6rem, 14vw, 5.6rem);
   font-weight: 500;
   letter-spacing: -0.03em;
   line-height: 0.95;
@@ -157,10 +221,13 @@ h1 {
   letter-spacing: 0.16em;
   text-transform: uppercase;
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .gate:hover,
-.gate:focus-visible {
+.gate:focus-visible,
+.gate:active {
   background: rgba(232, 184, 109, 0.16);
   outline: none;
 }
@@ -190,7 +257,13 @@ h1 {
   inset: 0;
   max-width: none;
   margin: 0;
+  width: 100%;
   grid-template-rows: auto 1fr auto;
+  padding:
+    max(12px, env(safe-area-inset-top, 0px))
+    max(12px, env(safe-area-inset-right, 0px))
+    max(12px, env(safe-area-inset-bottom, 0px))
+    max(12px, env(safe-area-inset-left, 0px));
 }
 
 .shell.is-live .hero,
@@ -217,11 +290,15 @@ h1 {
   place-items: center;
   width: 44px;
   height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   padding: 0;
   border: 0;
   background: transparent;
   color: var(--muted);
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .shell.is-live .mute {
@@ -229,7 +306,8 @@ h1 {
 }
 
 .mute:hover,
-.mute:focus-visible {
+.mute:focus-visible,
+.mute:active {
   color: var(--ink);
   outline: none;
 }
@@ -255,4 +333,64 @@ h1 {
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+}
+
+@media (max-width: 640px) {
+  .top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .status {
+    text-align: left;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+  }
+
+  .channel {
+    letter-spacing: 0.28em;
+  }
+
+  .gate {
+    margin-bottom: 28px;
+    padding: 12px 22px 12px 14px;
+    letter-spacing: 0.12em;
+  }
+
+  .gate-icon {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 380px) {
+  h1 {
+    font-size: clamp(2.2rem, 16vw, 3.2rem);
+  }
+
+  .gate {
+    width: 100%;
+    max-width: 320px;
+    justify-content: center;
+  }
+}
+
+@media (max-height: 520px) and (orientation: landscape) {
+  .shell {
+    padding-block: max(10px, env(safe-area-inset-top, 0px))
+      max(12px, env(safe-area-inset-bottom, 0px));
+    grid-template-rows: auto 1fr auto;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 12vh, 3.4rem);
+  }
+
+  .channel {
+    margin-bottom: 6px;
+  }
+
+  .gate {
+    margin-bottom: 12px;
+  }
 }
