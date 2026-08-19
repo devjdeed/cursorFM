@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cursor FM — Study</title>
+    <meta name="description" content="A live study-music station. One mix, always on." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Outfit:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <div id="stage" class="stage" aria-hidden="true"></div>
+
+    <main id="shell" class="shell">
+      <header class="top">
+        <p class="live"><span class="live-dot"></span>Live</p>
+        <p id="status" class="status">Press play to join the station</p>
+      </header>
+
+      <section class="hero">
+        <p class="channel">Study</p>
+        <h1>Cursor FM</h1>
+      </section>
+
+      <button id="gate" class="gate" type="button">
+        <span class="gate-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="28" height="28">
+            <path fill="currentColor" d="M8 5.14v13.72L19 12 8 5.14Z" />
+          </svg>
+        </span>
+        Play
+      </button>
+
+      <section class="deck" aria-label="Player">
+        <button id="mute" class="mute" type="button" aria-label="Mute" aria-pressed="false">
+          <svg class="icon-on" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+            <path
+              fill="currentColor"
+              d="M4 9v6h4l5 4V5L8 9H4Zm13.5 3a4.5 4.5 0 0 0-2.5-4.03v8.06A4.5 4.5 0 0 0 17.5 12Z"
+            />
+          </svg>
+          <svg class="icon-off" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+            <path
+              fill="currentColor"
+              d="M4 9v6h4l5 4V5L8 9H4Zm12.5 1.5 1.8-1.8 1.4 1.4-1.8 1.8 1.8 1.8-1.4 1.4-1.8-1.8-1.8 1.8-1.4-1.4 1.8-1.8-1.8-1.8 1.4-1.4 1.8 1.8Z"
+            />
+          </svg>
+        </button>
+      </section>
+    </main>
+
+    <audio id="mix" playsinline></audio>
+    <script type="module" src="/src/client/main.ts"></script>
+  </body>
+</html>

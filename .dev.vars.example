@@ -1,0 +1,5 @@
+# Local overrides for `npm run dev`. Not committed.
+# Copy values from wrangler.jsonc vars, then change duration to match the placeholder mix.
+
+AUDIO_PUBLIC_URL=/dev-mix.m4a
+DURATION_SECONDS=30

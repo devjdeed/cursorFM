@@ -1,0 +1,21 @@
+{
+  "name": "cursor-fm",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "npm run make-dev-mix && vite",
+    "build": "npm run make-dev-mix && tsc --noEmit && vite build",
+    "preview": "npm run build && vite preview",
+    "deploy": "npm run build && wrangler deploy",
+    "cf-typegen": "wrangler types",
+    "make-dev-mix": "bash scripts/make-dev-mix.sh",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.13.0",
+    "typescript": "~5.9.2",
+    "vite": "^7.1.2",
+    "wrangler": "^4.28.0"
+  }
+}

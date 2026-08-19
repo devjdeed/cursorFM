@@ -1,0 +1,258 @@
+:root {
+  color-scheme: dark;
+  --bg: #0c0a09;
+  --ink: #f5f0e8;
+  --muted: #a8a29e;
+  --amber: #e8b86d;
+  --amber-dim: rgba(232, 184, 109, 0.18);
+  --live: #f43f5e;
+  --font-display: "Fraunces", Georgia, serif;
+  --font-ui: "Outfit", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-ui);
+}
+
+body {
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
+.stage {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  background: var(--bg);
+}
+
+.stage iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  opacity: 0;
+  transition: opacity 600ms ease;
+  pointer-events: none;
+}
+
+.stage iframe.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.shell {
+  position: relative;
+  z-index: 2;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  padding: 28px 24px 32px;
+  max-width: 720px;
+  margin: 0 auto;
+  pointer-events: none;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.live,
+.status {
+  margin: 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.live {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--live);
+  line-height: 1;
+}
+
+.status:empty {
+  display: none;
+}
+
+.live-dot {
+  display: block;
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--live);
+  box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.6);
+  animation: pulse 1.8s ease-out infinite;
+}
+
+@keyframes pulse {
+  70% {
+    box-shadow: 0 0 0 10px rgba(244, 63, 94, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(244, 63, 94, 0);
+  }
+}
+
+.hero {
+  align-self: center;
+  text-align: center;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.65);
+}
+
+.channel {
+  margin: 0 0 12px;
+  font-size: 0.8rem;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+
+h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(3.4rem, 10vw, 5.6rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+}
+
+.gate,
+.mute {
+  pointer-events: auto;
+}
+
+.gate {
+  justify-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 48px;
+  padding: 14px 28px 14px 18px;
+  border: 1px solid var(--amber-dim);
+  border-radius: 999px;
+  background: rgba(232, 184, 109, 0.08);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.95rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.gate:hover,
+.gate:focus-visible {
+  background: rgba(232, 184, 109, 0.16);
+  outline: none;
+}
+
+.gate:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.gate-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--amber);
+  color: var(--bg);
+}
+
+.deck {
+  display: none;
+  padding-top: 8px;
+}
+
+.shell.is-live {
+  position: fixed;
+  inset: 0;
+  max-width: none;
+  margin: 0;
+  grid-template-rows: auto 1fr auto;
+}
+
+.shell.is-live .hero,
+.shell.is-live .gate {
+  display: none;
+}
+
+.shell.is-live .deck {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 0;
+}
+
+.shell.is-live .live,
+.shell.is-live .mute {
+  padding: 10px 12px;
+  border-radius: 999px;
+  background: rgba(12, 10, 9, 0.55);
+  backdrop-filter: blur(8px);
+}
+
+.mute {
+  display: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.shell.is-live .mute {
+  display: grid;
+}
+
+.mute:hover,
+.mute:focus-visible {
+  color: var(--ink);
+  outline: none;
+}
+
+.mute .icon-off {
+  display: none;
+}
+
+.mute.is-muted .icon-on {
+  display: none;
+}
+
+.mute.is-muted .icon-off {
+  display: block;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
