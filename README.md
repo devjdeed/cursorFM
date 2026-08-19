@@ -1,8 +1,17 @@
 # Cursor FM
 
-A single-channel study radio: one 2-hour mix, a shared station clock, hosted on Cloudflare Workers + R2.
+A single-channel study radio: one looping mix, a shared station clock, and a fullscreen visual that rotates through four scenes. Hosted on Cloudflare Workers.
 
 Everyone who hits Play lands at the same offset in the mix (`now % duration`). There is no live encoder.
+
+The visual layer is four self-contained HTML scenes in `public/`:
+
+1. Club Night
+2. Night Surf
+3. Night Studio
+4. Game Night
+
+Each scene fills the viewport for **2 minutes**, then the next one fades in. Play also requests browser fullscreen. After that, title chrome hides; Live and mute stay as a small overlay.
 
 ## Local
 
@@ -11,39 +20,47 @@ npm install
 npm run dev
 ```
 
-That generates a 30-second placeholder mix in `public/` (AAC if `ffmpeg` is installed, otherwise WAV) and starts Vite. Open the printed local URL and press Play.
+Open the printed local URL and press Play.
 
-Placeholder audio is gitignored. Re-run `npm run make-dev-mix` if you delete it.
+The station mix is `public/merged-audio.mp3` (~20.6 minutes). `wrangler.jsonc` points at that file:
 
-## Encode the real mix
-
-Use constant bitrate AAC so seeking is accurate:
-
-```bash
-ffmpeg -i your-mix.wav -c:a aac -b:a 128k -movflags +faststart study.m4a
-ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 study.m4a
+```jsonc
+"AUDIO_PUBLIC_URL": "/merged-audio.mp3",
+"DURATION_SECONDS": "1236"
 ```
 
-Set `DURATION_SECONDS` in `wrangler.jsonc` (or a production var) to that duration. Default is `7200` (2 hours). It must match the file.
+`DURATION_SECONDS` must match the file length (`ffprobe`). Local `.dev.vars` overrides these values and is gitignored.
 
-## Upload to R2
+`npm run make-dev-mix` still generates a 30-second placeholder (`public/dev-mix.m4a` or `.wav`) if you need a tiny stand-in. Point `.dev.vars` at it and set `DURATION_SECONDS=30`. Placeholder audio is gitignored.
+
+## Swap the mix
+
+Use a constant-bitrate file so seeking stays accurate. Example AAC:
+
+```bash
+ffmpeg -i your-mix.wav -c:a aac -b:a 128k -movflags +faststart mix.m4a
+ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 mix.m4a
+```
+
+Then set `AUDIO_PUBLIC_URL` and `DURATION_SECONDS` in `wrangler.jsonc` (and `.dev.vars` for local). Restart the dev server after changing `.dev.vars`.
+
+## Production audio (R2)
+
+`merged-audio.mp3` is about **47 MB**. Worker static assets cap individual files around 25 MiB, so do not ship the mix as a Vite/`public/` asset in production. Put it in R2 and give the Worker a public URL.
 
 ```bash
 npx wrangler r2 bucket create cursorfm-audio
-npx wrangler r2 object put cursorfm-audio/study.m4a --file=study.m4a --content-type=audio/mp4
+npx wrangler r2 object put cursorfm-audio/merged-audio.mp3 --file=public/merged-audio.mp3 --content-type=audio/mpeg
 ```
 
-Make the object publicly readable (r2.dev URL or a custom domain on the bucket). Then set the public URL:
+Make the object publicly readable (r2.dev URL or a custom domain on the bucket). Then set:
 
-```bash
-npx wrangler deploy
-# or put this in wrangler.jsonc vars before deploy:
-# AUDIO_PUBLIC_URL=https://pub-<id>.r2.dev/study.m4a
+```jsonc
+"AUDIO_PUBLIC_URL": "https://pub-<id>.r2.dev/merged-audio.mp3",
+"DURATION_SECONDS": "1236"
 ```
 
-Allow CORS on the bucket if you want the on-page visualizer. Playback still works without CORS; `AnalyserNode` needs `Access-Control-Allow-Origin` for the site origin.
-
-The browser streams the file with HTTP Range requests. Do not put the mix in Worker static assets (25 MiB cap).
+The browser streams with HTTP Range requests. The R2 binding in `wrangler.jsonc` is for that bucket; `/api/station` still returns the public URL — it does not proxy the file.
 
 ## Deploy
 
@@ -52,6 +69,8 @@ npx wrangler login
 npm run deploy
 ```
 
-## What v1 does not include
+Confirm login with `npx wrangler whoami` first. If the OAuth token has expired, run `npx wrangler login` again (or set `CLOUDFLARE_API_TOKEN`).
+
+## What it does not include
 
 Chat, accounts, extra channels, listener counts, Durable Objects, or Cloudflare Stream.

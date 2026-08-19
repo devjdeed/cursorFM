@@ -1,10 +1,21 @@
 node_modules
 dist
 .wrangler
-.dev.vars
-.DS_Store
 *.local
-public/dev-mix.m4a
-public/dev-mix.mp3
-public/dev-mix.wav
-public/study.m4a
+*.log
+
+# Secrets — keep .dev.vars.example
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+.env
+.env.*
+!.env.example
+
+.DS_Store
+
+# Mixes and source clips. Host production audio on R2.
+public/*.mp3
+public/*.m4a
+public/*.wav
+public/sounds/
