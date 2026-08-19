@@ -46,7 +46,7 @@ Then set `AUDIO_PUBLIC_URL` and `DURATION_SECONDS` in `wrangler.jsonc` (and `.de
 
 ## Production audio (R2)
 
-`merged-audio.mp3` is about **47 MB**. Worker static assets cap individual files around 25 MiB, so do not ship the mix as a Vite/`public/` asset in production. Put it in R2 and give the Worker a public URL.
+`public/merged-audio.mp3` is about **47 MB**. Worker static assets cap individual files around 25 MiB, so do not ship the mix as a Vite/`public/` asset in production. Put it in R2 and give the Worker a public URL.
 
 ```bash
 npx wrangler r2 bucket create cursorfm-audio
