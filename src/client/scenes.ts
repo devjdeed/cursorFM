@@ -59,7 +59,8 @@ export function startSceneLoop(stage: HTMLElement): void {
 
   function isSceneDocument(frame: HTMLIFrameElement): boolean {
     try {
-      return /\.html$/i.test(frame.contentWindow?.location.pathname ?? "");
+      const href = frame.contentWindow?.location.href ?? "";
+      return href !== "" && !href.startsWith("about:");
     } catch {
       return false;
     }

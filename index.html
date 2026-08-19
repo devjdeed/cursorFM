@@ -12,9 +12,13 @@
       rel="stylesheet"
     />
     <link rel="icon" href="/favicon.webp" type="image/webp" />
-    <link rel="prefetch" href="/Night%20Surf.html" />
-    <link rel="prefetch" href="/Night%20Studio.html" />
-    <link rel="prefetch" href="/Game%20Night.html" />
+    <style>
+      .stage-loader{position:absolute;top:0;left:0;right:0;z-index:2;pointer-events:none}
+      .stage-loader-track{width:100%;height:2px;overflow:hidden;background:rgba(232,184,109,.18)}
+      .stage-loader-fill{width:100%;height:100%;background:#e8b86d;box-shadow:0 0 12px #e8b86d;transform:scaleX(.06);transform-origin:left center;animation:loader-creep 12s cubic-bezier(.12,.7,.2,1) forwards}
+      .stage-loader.is-held .stage-loader-fill{animation:none;transition:transform .28s ease-out}
+      @keyframes loader-creep{to{transform:scaleX(.86)}}
+    </style>
   </head>
   <body>
     <div id="stage" class="stage" aria-hidden="true">
