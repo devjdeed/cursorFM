@@ -183,14 +183,6 @@ body {
   text-shadow: 0 2px 24px rgba(0, 0, 0, 0.65);
 }
 
-.channel {
-  margin: 0 0 12px;
-  font-size: 0.8rem;
-  letter-spacing: 0.42em;
-  text-transform: uppercase;
-  color: var(--amber);
-}
-
 h1 {
   margin: 0;
   font-family: var(--font-display);
@@ -347,10 +339,6 @@ h1 {
     letter-spacing: 0.1em;
   }
 
-  .channel {
-    letter-spacing: 0.28em;
-  }
-
   .gate {
     margin-bottom: 28px;
     padding: 12px 22px 12px 14px;
@@ -384,10 +372,6 @@ h1 {
 
   h1 {
     font-size: clamp(2rem, 12vh, 3.4rem);
-  }
-
-  .channel {
-    margin-bottom: 6px;
   }
 
   .gate {
