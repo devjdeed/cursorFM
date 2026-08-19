@@ -7,7 +7,8 @@
 	"assets": {
 		"not_found_handling": "single-page-application",
 		"run_worker_first": [
-			"/api/*"
+			"/api/*",
+			"/merged-audio.mp3"
 		],
 	},
 	"observability": {
@@ -15,7 +16,7 @@
 	},
 	"vars": {
 		// Public URL of the mix. Local .dev.vars overrides this.
-		"AUDIO_PUBLIC_URL": "/merged-audio.mp3",
+		"AUDIO_PUBLIC_URL": "/merged-audio.mp3?v=2",
 		// Must match the real file length (ffprobe).
 		"DURATION_SECONDS": "1236",
 	},
@@ -23,11 +24,6 @@
 		{
 			"binding": "AUDIO",
 			"bucket_name": "cursorfm-audio",
-		},
-		{
-			"bucket_name": "cursorfm-audio",
-			"binding": "cursorfm_audio",
-			"remote": true
 		},
 	],
 }

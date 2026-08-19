@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "npm run make-dev-mix && vite",
-    "build": "npm run make-dev-mix && tsc --noEmit && vite build",
+    "build": "npm run make-dev-mix && tsc --noEmit && vite build && rm -f dist/client/merged-audio.mp3 dist/client/dev-mix.m4a dist/client/dev-mix.mp3 dist/client/dev-mix.wav",
     "preview": "npm run build && vite preview",
     "deploy": "npm run build && wrangler deploy",
     "cf-typegen": "wrangler types",

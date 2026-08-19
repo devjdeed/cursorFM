@@ -15,21 +15,6 @@ startSceneLoop(stage);
 let station: StationStatus | undefined;
 let loadPromise: Promise<void> | undefined;
 
-function enterFullscreen(): void {
-  const el = document.documentElement as HTMLElement & {
-    webkitRequestFullscreen?: () => Promise<void> | void;
-  };
-  const request = el.requestFullscreen?.bind(el) ?? el.webkitRequestFullscreen?.bind(el);
-  if (!request) {
-    return;
-  }
-  try {
-    void Promise.resolve(request()).catch(() => {});
-  } catch {
-    // CSS already covers the viewport when the Fullscreen API is unavailable.
-  }
-}
-
 function goLive(): void {
   shell.classList.add("is-live");
   statusEl.textContent = "";
@@ -48,7 +33,6 @@ async function preload(): Promise<void> {
 
 function startFromGesture(): void {
   gate.disabled = true;
-  enterFullscreen();
   const ready = loadPromise ?? preload();
   loadPromise = ready;
   void ready

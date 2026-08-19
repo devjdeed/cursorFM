@@ -38,7 +38,6 @@ export function expectedPosition(durationSeconds: number, nowMs = Date.now()): n
 
 export function createPlayer(audio: HTMLAudioElement) {
   audio.loop = true;
-  audio.crossOrigin = "anonymous";
   audio.preload = "auto";
   audio.volume = 0.8;
 

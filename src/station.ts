@@ -4,6 +4,9 @@ export const STATION = {
   title: "Cursor FM",
 } as const;
 
+export const MIX_OBJECT_KEY = "merged-audio.mp3";
+export const MIX_PATH = `/${MIX_OBJECT_KEY}`;
+
 export const DEFAULT_DURATION_SECONDS = 7200;
 
 export function livePosition(durationSeconds: number, nowMs = Date.now()): number {

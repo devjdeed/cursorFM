@@ -1,6 +1,6 @@
 # Cursor FM
 
-A single-channel study radio: one looping mix, a shared station clock, and a fullscreen visual that rotates through four scenes. Hosted on Cloudflare Workers.
+A single-channel study radio: one looping mix, a shared station clock, and a visual that rotates through four scenes. Hosted on Cloudflare Workers.
 
 Everyone who hits Play lands at the same offset in the mix (`now % duration`). There is no live encoder.
 
@@ -11,7 +11,7 @@ The visual layer is four self-contained HTML scenes in `public/`:
 3. Night Studio
 4. Game Night
 
-Each scene fills the viewport for **2 minutes**, then the next one fades in. Play also requests browser fullscreen. After that, title chrome hides; Live and mute stay as a small overlay.
+Each scene fills the viewport for **2 minutes**, then the next one fades in. After Play, title chrome hides; Live and mute stay as a small overlay.
 
 ## Local
 
@@ -46,21 +46,21 @@ Then set `AUDIO_PUBLIC_URL` and `DURATION_SECONDS` in `wrangler.jsonc` (and `.de
 
 ## Production audio (R2)
 
-`public/merged-audio.mp3` is about **47 MB**. Worker static assets cap individual files around 25 MiB, so do not ship the mix as a Vite/`public/` asset in production. Put it in R2 and give the Worker a public URL.
+`public/merged-audio.mp3` is about **47 MB**. Worker static assets cap individual files around 25 MiB, so do not ship the mix as a Vite/`public/` asset. Upload it to the `cursorfm-audio` bucket. Use `--remote` or the file only lands in local Miniflare storage.
 
 ```bash
 npx wrangler r2 bucket create cursorfm-audio
-npx wrangler r2 object put cursorfm-audio/merged-audio.mp3 --file=public/merged-audio.mp3 --content-type=audio/mpeg
+npx wrangler r2 object put cursorfm-audio/merged-audio.mp3 --file=public/merged-audio.mp3 --content-type=audio/mpeg --remote
 ```
 
-Make the object publicly readable (r2.dev URL or a custom domain on the bucket). Then set:
+The Worker streams `/merged-audio.mp3` from that object (HTTP Range included). Keep:
 
 ```jsonc
-"AUDIO_PUBLIC_URL": "https://pub-<id>.r2.dev/merged-audio.mp3",
+"AUDIO_PUBLIC_URL": "/merged-audio.mp3",
 "DURATION_SECONDS": "1236"
 ```
 
-The browser streams with HTTP Range requests. The R2 binding in `wrangler.jsonc` is for that bucket; `/api/station` still returns the public URL — it does not proxy the file.
+The bucket does not need a public r2.dev URL.
 
 ## Deploy
 
