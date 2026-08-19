@@ -202,7 +202,8 @@ h1 {
 }
 
 .gate,
-.mute {
+.mute,
+.tip-skip {
   pointer-events: auto;
 }
 
@@ -325,6 +326,62 @@ h1 {
   display: block;
 }
 
+.tips {
+  display: none;
+}
+
+.shell.is-live .tips {
+  display: flex;
+  position: absolute;
+  left: 50%;
+  bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  align-items: center;
+  gap: 8px;
+  max-width: min(520px, calc(100% - 112px));
+  padding: 10px 8px 10px 14px;
+  border-radius: 999px;
+  background: rgba(12, 10, 9, 0.55);
+  backdrop-filter: blur(8px);
+  pointer-events: auto;
+}
+
+.tip-text {
+  margin: 0;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1.35;
+  text-align: left;
+}
+
+.tip-skip {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tip-skip:hover,
+.tip-skip:focus-visible,
+.tip-skip:active {
+  color: var(--amber);
+  outline: none;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -337,6 +394,17 @@ h1 {
 }
 
 @media (max-width: 640px) {
+  .shell.is-live .tips {
+    max-width: min(520px, calc(100% - 96px));
+    padding: 8px 6px 8px 12px;
+    border-radius: 18px;
+  }
+
+  .tip-text {
+    font-size: 0.74rem;
+    line-height: 1.4;
+  }
+
   .top {
     flex-direction: column;
     align-items: flex-start;

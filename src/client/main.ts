@@ -1,5 +1,6 @@
 import { createPlayer, type StationStatus } from "./player";
 import { startSceneLoop } from "./scenes";
+import { startTipChip } from "./tip-chip";
 import "./style.css";
 
 const audio = document.querySelector("#mix") as HTMLAudioElement;
@@ -18,6 +19,7 @@ let loadPromise: Promise<void> | undefined;
 function goLive(): void {
   shell.classList.add("is-live");
   statusEl.textContent = "";
+  startTipChip();
 }
 
 async function preload(): Promise<void> {
