@@ -45,7 +45,10 @@ export function startSceneLoop(stage: HTMLElement): void {
     tick();
   }
 
-  function createFrame(src: string, priority: "high" | "low"): HTMLIFrameElement {
+  function createFrame(
+    src: string,
+    priority: "high" | "low",
+  ): HTMLIFrameElement {
     const frame = document.createElement("iframe");
     frame.src = src;
     frame.setAttribute("title", "Station visual");
@@ -71,7 +74,10 @@ export function startSceneLoop(stage: HTMLElement): void {
     if (!isSceneDocument(frame) || !doc?.body) {
       return false;
     }
-    return !doc.getElementById("__bundler_thumbnail") && !doc.getElementById("__bundler_loading");
+    return (
+      !doc.getElementById("__bundler_thumbnail") &&
+      !doc.getElementById("__bundler_loading")
+    );
   }
 
   function waitUntilUnpacked(frame: HTMLIFrameElement): Promise<void> {
@@ -87,7 +93,11 @@ export function startSceneLoop(stage: HTMLElement): void {
         resolve();
       };
       const tick = (): void => {
-        if (!frame.isConnected || isUnpacked(frame) || Date.now() - started > UNPACK_TIMEOUT_MS) {
+        if (
+          !frame.isConnected ||
+          isUnpacked(frame) ||
+          Date.now() - started > UNPACK_TIMEOUT_MS
+        ) {
           finish();
           return;
         }

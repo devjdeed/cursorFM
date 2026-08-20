@@ -30,7 +30,7 @@ async function preload(): Promise<void> {
   }
   station = (await response.json()) as StationStatus;
   await player.load(station);
-  statusEl.textContent = "Press play to join the station";
+  statusEl.textContent = "";
 }
 
 function startFromGesture(): void {
