@@ -355,6 +355,24 @@ h1 {
   pointer-events: auto;
 }
 
+.tips-label {
+  position: absolute;
+  top: 0;
+  left: 16px;
+  transform: translateY(-50%);
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(12, 10, 9, 0.85);
+  backdrop-filter: blur(8px);
+  color: var(--amber);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
 .tip-text {
   margin: 0;
   min-width: 0;
